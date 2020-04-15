@@ -8,7 +8,7 @@ from django.views.generic import ListView, DetailView, View
 from django.shortcuts import redirect
 from django.utils import timezone
 from .forms import CheckoutForm, CouponForm, RefundForm
-from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category
+from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 
@@ -45,7 +45,7 @@ class PaymentView(View):
         try:
             charge = stripe.Charge.create(
                 amount=amount,  # cents
-                currency="usd",
+                currency="inr",
                 source=token
             )
             # create the payment
@@ -152,6 +152,29 @@ class CategoryView(View):
         return render(self.request, "category.html", context)
 
 
+class CodOrder(View):
+  def get(self, *args, **kwargs):
+      order = Order.objects.get(user=self.request.user, ordered=False)
+      amount = int(order.get_total())
+      billing_address = BillingAddress.objects.filter(user=self.request.user, address_type='B')
+      bcount = BillingAddress.objects.filter(user=self.request.user, address_type='B').count()
+      print(billing_address[bcount-1])
+      try:
+          order.ordered = True
+          order.amount = str(amount)
+          order.deliveryaddress = billing_address[bcount-1]
+           # TODO : assign ref code
+          order.ref_code = create_ref_code()
+          order.save()
+
+          OrderDetailsCheck
+          messages.success(self.request, "Order was successful")
+          return redirect("/")
+      except ObjectDoesNotExist:    
+            messages.error(self.request, "Error occured, try again after some time") 
+            return redirect("/")
+
+
 class CheckoutView(View):
     def get(self, *args, **kwargs):
         try:
@@ -166,6 +189,7 @@ class CheckoutView(View):
             return render(self.request, "checkout.html", context)
 
         except ObjectDoesNotExist:
+            print("coming here2")
             messages.info(self.request, "You do not have an active order")
             return redirect("core:checkout")
 
@@ -174,6 +198,7 @@ class CheckoutView(View):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
             print(self.request.POST)
+            print ("coming here")
             if form.is_valid():
                 street_address = form.cleaned_data.get('street_address')
                 apartment_address = form.cleaned_data.get('apartment_address')
@@ -195,12 +220,14 @@ class CheckoutView(View):
                 billing_address.save()
                 order.billing_address = billing_address
                 order.save()
-
+                
                 # add redirect to the selected payment option
                 if payment_option == 'S':
                     return redirect('core:payment', payment_option='stripe')
                 elif payment_option == 'P':
                     return redirect('core:payment', payment_option='paypal')
+                elif payment_option == 'COD':
+                     return HttpResponseRedirect('/codorder/')
                 else:
                     messages.warning(
                         self.request, "Invalid payment option select")
@@ -345,7 +372,7 @@ class AddCouponView(View):
                 return redirect("core:checkout")
 
             except ObjectDoesNotExist:
-                messages.info(request, "You do not have an active order")
+                messages.info(self.request, "You do not have an active order")
                 return redirect("core:checkout")
 
 

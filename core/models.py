@@ -127,6 +127,8 @@ class Order(models.Model):
     received = models.BooleanField(default=False)
     refund_requested = models.BooleanField(default=False)
     refund_granted = models.BooleanField(default=False)
+    amount = models.TextField(default="00")
+    deliveryaddress = models.TextField(default="00")
 
     '''
     1. Item added to cart
@@ -194,3 +196,13 @@ class Refund(models.Model):
 
     def __str__(self):
         return f"{self.pk}"
+
+
+
+class OrderDetailsCheck(models.Model):
+  orderedby = models.TextField()
+  total_amount = models.TextField()
+  delivery_address = models.TextField()
+  Items = models.TextField()
+  Mobilenumber = models.TextField()
+  

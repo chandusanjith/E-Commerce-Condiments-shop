@@ -18,17 +18,13 @@ class OrderAdmin(admin.ModelAdmin):
                     'ordered',
                     'being_delivered',
                     'received',
-                    'refund_requested',
-                    'refund_granted',
-                    'shipping_address',
-                    'billing_address',
                     'payment',
-                    'coupon'
+                    'coupon',
+                    'amount',
+                    'deliveryaddress',
                     ]
     list_display_links = [
         'user',
-        'shipping_address',
-        'billing_address',
         'payment',
         'coupon'
     ]
