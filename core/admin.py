@@ -19,6 +19,7 @@ class OrderAdmin(admin.ModelAdmin):
                     'being_delivered',
                     'received',
                     'payment',
+                    'ordereditems',
                     'coupon',
                     'amount',
                     'deliveryaddress',

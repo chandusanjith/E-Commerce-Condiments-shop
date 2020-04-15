@@ -129,6 +129,7 @@ class Order(models.Model):
     refund_granted = models.BooleanField(default=False)
     amount = models.TextField(default="00")
     deliveryaddress = models.TextField(default="00")
+    ordereditems = models.TextField(default="00")
 
     '''
     1. Item added to cart

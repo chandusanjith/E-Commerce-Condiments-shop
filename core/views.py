@@ -155,18 +155,30 @@ class CategoryView(View):
 class CodOrder(View):
   def get(self, *args, **kwargs):
       order = Order.objects.get(user=self.request.user, ordered=False)
+      context = {
+                'objects': order
+            }
       amount = int(order.get_total())
       billing_address = BillingAddress.objects.filter(user=self.request.user, address_type='B')
       bcount = BillingAddress.objects.filter(user=self.request.user, address_type='B').count()
-      print(billing_address[bcount-1])
+      print(billing_address[bcount-1].zip)
+      custaddress = billing_address[bcount-1].street_address + "\n" + billing_address[bcount-1].apartment_address + "\n" + str(billing_address[bcount-1].country) + "\n" + billing_address[bcount-1].zip 
+      print(context)
+      pakkafinal = ''
+      for order_item in context['objects'].items.all():
+        finalprod = order_item.item.title + " " + str(order_item.quantity) + "\n" + ','
+        pakkafinal += str(finalprod)
+        print(pakkafinal)
+
       try:
           order.ordered = True
           order.amount = str(amount)
-          order.deliveryaddress = billing_address[bcount-1]
+          order.deliveryaddress = custaddress
            # TODO : assign ref code
           order.ref_code = create_ref_code()
+          order.ordereditems = pakkafinal
           order.save()
-
+          
           OrderDetailsCheck
           messages.success(self.request, "Order was successful")
           return redirect("/")
@@ -265,7 +277,9 @@ def add_to_cart(request, slug):
         item=item,
         user=request.user,
         ordered=False
+        
     )
+
     order_qs = Order.objects.filter(user=request.user, ordered=False)
     if order_qs.exists():
         order = order_qs[0]
@@ -281,7 +295,7 @@ def add_to_cart(request, slug):
     else:
         ordered_date = timezone.now()
         order = Order.objects.create(
-            user=request.user, ordered_date=ordered_date)
+        user=request.user, ordered_date=ordered_date)
         order.items.add(order_item)
         messages.info(request, "Item was added to your cart.")
     return redirect("core:order-summary")
