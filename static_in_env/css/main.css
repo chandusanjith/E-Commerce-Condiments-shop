@@ -60,6 +60,18 @@ Input, textarea : 14px/1.6 '', Arial, sans-serif;
   src: url('../fonts/montserrat/Montserrat-Italic.ttf'); 
 }
 
+.heart {
+  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/9632/heart.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  display: inline-block;
+  position: relative;
+  height: 25px;
+  width: 25px;
+  top: 10px;
+}
+
+
 @font-face {
   font-family: Montserrat-Black;
   src: url('../fonts/montserrat/Montserrat-Black.ttf'); 

@@ -44,7 +44,7 @@
   <div class="py-5 text-center">
     <img class="d-block mx-auto mb-4" src="/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
     <h2>Checkout form</h2>
-    <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
+    <p class="lead">Asthis is the beta version, no payment option is available, currently only casj=h on delivery is available</p>
   </div>
 
   <div class="row">
@@ -77,7 +77,7 @@
             <label for="state">City</label>
             <select class="custom-select d-block w-100" id="state" required>
               <option value="">Choose...</option>
-              <option>California</option>
+              <option>Karnataka</option>
               <option>Yangon</option>
 
             </select>
@@ -108,26 +108,29 @@
 
         <h4 class="mb-3">Payment</h4>
 
-        <div class="d-block my-3">
-        	{% for value, name in form.fields.payment_option.choices %}
+ <!--       <div class="d-block my-3">
+    	{% for value, name in form.fields.payment_option.choices %}
           <div class="custom-control custom-radio">
             <input id="{{ name }}" name="payment_option" value="{{ value }}" type="radio" class="custom-control-input"  required>
             <label class="custom-control-label" for="{{name}}">{{ name }}</label>
           </div>
           {% endfor %}
-        </div>
-        
-        <hr class="mb-4">
-        <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
-      </form>
-    </div>
+        </div> -->
+
+      <div class="d-block my-3">
+          <div class="custom-control custom-radio">
+            <input id="COD" name="payment_option" value="COD" type="radio" class="custom-control-input"  required>
+            <label class="custom-control-label" for="COD">COD</label>
+          </div>
+        </div> 
+
 
     {% include "order_snippet.html" %}
 
   </div>
 
   <footer class="my-5 pt-5 text-muted text-center text-small">
-    <p class="mb-1">&copy; 2017-2019 Company Name</p>
+    <p class="mb-1">&copy; 2020 parameter Labs</p>
     <ul class="list-inline">
       <li class="list-inline-item"><a href="#">Privacy</a></li>
       <li class="list-inline-item"><a href="#">Terms</a></li>

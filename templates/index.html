@@ -150,12 +150,14 @@
 										<i class="icon-wishlist icon_heart_alt" aria-hidden="true"></i>
 										<i class="icon-wishlist icon_heart dis-none" aria-hidden="true"></i>
 									</a>
-	
+	                                
 									<div class="block2-btn-addcart w-size1 trans-0-4">
 										<!-- Button -->
+                    <a href="{{item.get_absolute_url}}" 
 										<button class="flex-c-m size1 bg4 bo-rad-23 hov1 s-text1 trans-0-4">
-											Add to Cart
+											View product
 										</button>
+                 </a>
 									</div>
 								</div>
 							</div>
@@ -168,15 +170,15 @@
 
 								{% if item.discount_price %}
 								<span class="block2-oldprice m-text7 p-r-5">
-									${{ item.price }}
+									₹{{ item.price }}
 								</span>
 
 								<span class="block2-newprice m-text8 p-r-5">
-									${{ item.discount_price }}
+									₹{{ item.discount_price }}
 								</span>
 								{% else %}
 								<span class="block2-price m-text6 p-r-5">
-									${{ item.price }}
+									₹{{ item.price }}
 								</span>
 								{% endif %}
 								
@@ -221,27 +223,27 @@
 
 				<div class="col-sm-10 col-md-8 col-lg-6 m-l-r-auto p-t-15 p-b-15">
 					<div class="bgwhite hov-img-zoom pos-relative p-b-20per-ssm">
-						<img src="{% static 'images/shop-item-09.webp' %}" alt="IMG-BANNER">
+						<img src="{% static 'images/shop-item-09.jpg' %}" alt="IMG-BANNER">
 
 						<div class="ab-t-l sizefull flex-col-c-b p-l-15 p-r-15 p-b-20">
 							<div class="t-center">
 								<a href="product-detail.html" class="dis-block s-text3 p-b-5">
-									Gafas sol Hawkers one
+									Andhra Pickle (Mango)
 								</a>
 
 								<span class="block2-oldprice m-text7 p-r-5">
-									$29.50
+									₹500 per kG
 								</span>
 
 								<span class="block2-newprice m-text8">
-									$15.90
+										₹250 per kG
 								</span>
 							</div>
 
 							<div class="flex-c-m p-t-44 p-t-30-xl">
 								<div class="flex-col-c-m size3 bo1 m-l-5 m-r-5">
 									<span class="m-text10 p-b-1 days">
-										69
+										5
 									</span>
 
 									<span class="s-text5">
@@ -539,17 +541,8 @@
 
       <div>
         <p class="s-text7 w-size27">
-          Any questions? Let us know in store at 8th floor, 379 Hudson St, New
-          York, NY 10018 or call us on (+1) 96 716 6879
+						Any questions? Let us know in store at Ran and Co circle, opposite SBI ATM, Davangere, Karnataka 577004, India  or call us on (+91) 6360723237 or 8970369157
         </p>
-
-        <div class="flex-m p-t-30">
-          <a href="#" class="fs-18 color1 p-r-20 fa fa-facebook"></a>
-          <a href="#" class="fs-18 color1 p-r-20 fa fa-instagram"></a>
-          <a href="#" class="fs-18 color1 p-r-20 fa fa-pinterest-p"></a>
-          <a href="#" class="fs-18 color1 p-r-20 fa fa-snapchat-ghost"></a>
-          <a href="#" class="fs-18 color1 p-r-20 fa fa-youtube-play"></a>
-        </div>
       </div>
     </div>
 
@@ -717,9 +710,9 @@
     </a>
 
     <div class="t-center s-text8 p-t-20">
-      Copyright © 2018 All rights reserved. | This template is made with
-      <i class="fa fa-heart-o" aria-hidden="true"></i> by
-      <a href="https://colorlib.com" target="_blank">Colorlib</a>
+      Copyright © 2020 All rights reserved. | Powered by Parameter Labs (A start up by chandu sanjith.T)
+      <span class="heart"></span>
+      <a href="https://ParameterLabs.com" target="_blank">Parameter Labs</a>
     </div>
   </div>
 </footer>
