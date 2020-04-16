@@ -11,7 +11,7 @@ from .views import (
     PaymentView,
     AddCouponView,
     RequestRefundView,
-    CategoryView, CodOrder, signup
+    CategoryView, CodOrder, signup, MyOders
 )
 
 app_name = 'core'
@@ -31,5 +31,6 @@ urlpatterns = [
     path('payment/<payment_option>/', PaymentView.as_view(), name='payment'),
     path('request-refund/', RequestRefundView.as_view(), name='request-refund'),
     path('codorder/', CodOrder.as_view(), name='codorder'),
-    path('signup/', signup)
+    path('signup/', signup),
+    path('myorders/', MyOders.as_view(), name = 'myorders')
 ]

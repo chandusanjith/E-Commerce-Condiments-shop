@@ -44,7 +44,16 @@ def signup(request):
     pno.save()
     return HttpResponseRedirect('/accounts/login/')
 
-
+class MyOders(LoginRequiredMixin, View):
+     def get(self, *args, **kwargs):
+       try:
+          user = self.request.user
+          orders = Order.objects.filter(user = user)
+          context={'orderdetails': orders}
+          return render(self.request, 'orderdetails.html', context)
+       except ObjectDoesNotExist:
+            messages.error(self.request, "You do not have an orders")
+            return redirect("/")
 
 def create_ref_code():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
@@ -204,13 +213,14 @@ class CodOrder(View):
           order.amount = str(amount)
           order.deliveryaddress = custaddress
            # TODO : assign ref code
-          order.ref_code = create_ref_code()
+          refnum = create_ref_code()
+          order.ref_code = refnum
           order.ordereditems = pakkafinal
           order.phonenumber = phone[0].phonenumber
           order.save()
           
           OrderDetailsCheck
-          messages.success(self.request, "Order was successful")
+          messages.success(self.request, "Order was successful Please note this order reference number " + '' + refnum )
           return redirect("/")
       except ObjectDoesNotExist:    
             messages.error(self.request, "Error occured, try again after some time") 
