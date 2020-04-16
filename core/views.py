@@ -276,14 +276,14 @@ def add_to_cart(request, slug):
     order_item, created = OrderItem.objects.get_or_create(
         item=item,
         user=request.user,
-        ordered=False
-        
+        ordered=False 
     )
-
+    print("part1")
     order_qs = Order.objects.filter(user=request.user, ordered=False)
     if order_qs.exists():
         order = order_qs[0]
         if order.items.filter(item__slug=item.slug).exists():
+            print("part2")
             order_item.quantity += 1
             order_item.save()
             messages.info(request, "Item qty was updated.")
