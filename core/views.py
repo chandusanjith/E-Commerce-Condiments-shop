@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -8,7 +9,7 @@ from django.views.generic import ListView, DetailView, View
 from django.shortcuts import redirect
 from django.utils import timezone
 from .forms import CheckoutForm, CouponForm, RefundForm
-from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck
+from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 
@@ -17,6 +18,32 @@ import random
 import string
 import stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+def signup(request):
+  uname = request.POST['uname']
+  mobile = request.POST['pno']
+  password1 = request.POST['psw']
+  password2 = request.POST['psw-repeat']
+  email = request.POST['email']
+  userexist = User.objects.filter(username = uname)
+  print(userexist)
+  if password1 != password2:
+    messages.info(request, 'Passwords not matching')
+    return render(request, 'account/signup.html')
+  elif User.objects.filter(username = uname).exists():
+      messages.info(request, 'User already exist')
+      return render(request, 'account/signup.html')
+  elif User.objects.filter(email = email).exists():
+      messages.info(request, 'email already exist')
+      return render(request, 'account/signup.html')
+  else:
+    user = User.objects.create_user(username = uname, password = password1, email = email)
+    user.save()
+    pno = phonenumber(user =uname,phonenumber = mobile  )
+    pno.save()
+    return HttpResponseRedirect('/accounts/login/')
+
 
 
 def create_ref_code():
@@ -164,6 +191,8 @@ class CodOrder(View):
       print(billing_address[bcount-1].zip)
       custaddress = billing_address[bcount-1].street_address + "\n" + billing_address[bcount-1].apartment_address + "\n" + str(billing_address[bcount-1].country) + "\n" + billing_address[bcount-1].zip 
       print(context)
+      phone = phonenumber.objects.filter(user =self.request.user )
+      print(phone)
       pakkafinal = ''
       for order_item in context['objects'].items.all():
         finalprod = order_item.item.title + " " + str(order_item.quantity) + "\n" + ','
@@ -177,6 +206,7 @@ class CodOrder(View):
            # TODO : assign ref code
           order.ref_code = create_ref_code()
           order.ordereditems = pakkafinal
+          order.phonenumber = phone[0].phonenumber
           order.save()
           
           OrderDetailsCheck

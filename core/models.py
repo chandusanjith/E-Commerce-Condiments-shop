@@ -130,6 +130,7 @@ class Order(models.Model):
     amount = models.TextField(default="00")
     deliveryaddress = models.TextField(default="00")
     ordereditems = models.TextField(default="00")
+    phonenumber = models.TextField(default="00")
 
     '''
     1. Item added to cart
@@ -198,6 +199,10 @@ class Refund(models.Model):
     def __str__(self):
         return f"{self.pk}"
 
+
+class phonenumber(models.Model):
+  user = models.TextField()
+  phonenumber = models.TextField()
 
 
 class OrderDetailsCheck(models.Model):

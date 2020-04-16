@@ -22,6 +22,7 @@ class OrderAdmin(admin.ModelAdmin):
                     'ordereditems',
                     'coupon',
                     'amount',
+                    'phonenumber',
                     'deliveryaddress',
                     ]
     list_display_links = [
