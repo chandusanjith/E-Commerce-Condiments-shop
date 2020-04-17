@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView, View
 from django.shortcuts import redirect
 from django.utils import timezone
 from .forms import CheckoutForm, CouponForm, RefundForm
-from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber
+from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber, subscriptions
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 
@@ -54,6 +54,25 @@ class MyOders(LoginRequiredMixin, View):
        except ObjectDoesNotExist:
             messages.error(self.request, "You do not have an orders")
             return redirect("/")
+
+class MyProfile(LoginRequiredMixin, View):
+  def get(self, *args, **kwargs):
+    try:
+       orders = Order.objects.filter(user = self.request.user)
+       context={'Profile': orders}
+       print(orders)
+       return render(self.request, 'profile.html', context)
+    except ObjectDoesNotExist:
+            messages.error(self.request, "Error occured! contact administrator")
+            return redirect("/")
+    
+def Subscribe(request):
+  email = request.POST['email']
+  subscription = subscriptions(user = 'Anonymous', email = email)
+  subscription.save()
+  messages.error(request, "Subscription Added!")
+  return redirect("/")
+
 
 def create_ref_code():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))

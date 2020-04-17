@@ -211,4 +211,9 @@ class OrderDetailsCheck(models.Model):
   delivery_address = models.TextField()
   Items = models.TextField()
   Mobilenumber = models.TextField()
-  deliverystatus = models.TextField()
+  deliverystatus = models.TextField(default=False)
+
+
+class subscriptions(models.Model):
+  user = models.TextField()
+  email = models.TextField()

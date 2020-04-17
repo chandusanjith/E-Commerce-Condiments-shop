@@ -153,7 +153,7 @@
 	                                
 									<div class="block2-btn-addcart w-size1 trans-0-4">
 										<!-- Button -->
-                    <a href="{{item.get_absolute_url}}" 
+                    <a href="{{item.get_absolute_url}}" >
 										<button class="flex-c-m size1 bg4 bo-rad-23 hov1 s-text1 trans-0-4">
 											View product
 										</button>
@@ -657,7 +657,7 @@
         Newsletter
       </h4>
 
-      <form>
+      <form action = "subscribe/" method = 'POST'>{% csrf_token %}
         <div class="effect1 w-size9">
           <input
             class="s-text7 bg6 w-full p-b-5"

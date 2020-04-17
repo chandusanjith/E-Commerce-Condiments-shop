@@ -51,7 +51,7 @@
             <h6 class="my-0">{{ order_item.item.title }}</h6>
             <small class="text-muted">quantity : {{ order_item.quantity }}</small>
           </div>
-          <span class="text-muted">${{ order_item.get_final_price }}</span>
+          <span class="text-muted">₹{{ order_item.get_final_price }}</span>
         </li>
         {% endfor %}
         <li class="list-group-item d-flex justify-content-between bg-light">
@@ -59,11 +59,11 @@
             <h6 class="my-0">Promo code</h6>
             <small>{{order.coupon.code}}</small>
           </div>
-          <span class="text-success">-${{ order.coupon.amount }}</span>
+          <span class="text-success">-₹{{ order.coupon.amount }}</span>
         </li>
         <li class="list-group-item d-flex justify-content-between">
           <span>Total (USD)</span>
-          <strong>${{ order.get_total }}</strong>
+          <strong>₹{{ order.get_total }}</strong>
         </li>
       </ul>
       
