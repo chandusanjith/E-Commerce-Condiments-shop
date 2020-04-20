@@ -217,3 +217,12 @@ class OrderDetailsCheck(models.Model):
 class subscriptions(models.Model):
   user = models.TextField()
   email = models.TextField()
+
+
+class contacted(models.Model):
+	name = models.TextField()
+	email = models.TextField()
+	message = models.TextField()
+	mobile = models.TextField()
+	dateofcontact = models.TextField()
+	

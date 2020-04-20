@@ -1,0 +1,101 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block content %}
+<style>
+	#sec {
+  font-family: 'Raleway', sans-serif;
+  padding: 50px 0;
+  background: #fff;
+  text-align: center;
+  word-wrap: break-word;
+}
+#sec h2 {
+  font-weight: 200;
+  font-size: 30px;
+  color: #63B7E6;
+}
+#sec ul {
+  margin: 0;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  list-style: none;
+}
+#sec ul li {
+  padding: 40px;
+  width: 300px;
+  transition: box-shadow .3s;
+}
+#sec ul li:hover {
+  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+#sec ul li:hover span {
+  color: #63B7E6;
+}
+#sec ul li:hover p {
+  color: #555;
+}
+#sec ul li:hover h3 {
+  color: #63B7E6;
+}
+#sec ul li:hover h3:after {
+  width: 25px;
+}
+#sec ul li span {
+  font-size: 2.6em;
+  display: block;
+  transition: color .3s;
+  color: #A2A2A2;
+}
+#sec ul li span:before, #sec ul li span:after {
+  position: static;
+}
+#sec ul li h3 {
+  color: #6f6f6f;
+  display: inline-block;
+  font-size: 24px;
+  font-weight: 100;
+  transition: color .3s;
+}
+#sec ul li h3:after {
+  content: '';
+  position: relative;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: #6f6f6f;
+  transition: width .3s;
+}
+#sec ul li p {
+  color: #A2A2A2;
+  text-align: left;
+  text-indent: 1em;
+  font-size: 16px;
+  line-height: 26px;
+  transition: color .3s;
+}
+</style>
+<section id="sec">
+  <h2>ABOUT US</h2>
+  <ul>
+    <li>
+      <span class="fa fa-heart"></span>
+
+      <h3>Our Story</h3>
+      <p>Just a small initiative by Chandu sanjith.T to make Preethi Condiments online with the help of advance technologies </p>
+    </li>
+    <li><span class="fa fa-code"></span>
+      <h3>Parameter Labs</h3>
+      <p>parameter Labs is a small startup, where we develop web pplications, build websites using advance technologies like python-Django. This web-application  is also developed using Django and puthon where Instagram, Sptify, Google Drive also uses this technology. </p>
+    </li>
+    <li><span class="fa fa-users"></span>
+      <h3>Preethi Condiments</h3>
+      <p>Preethi condiments has been started by Raghavendra T and Varalakshmi T, a small condiments store Ram & co circle, Davangere  </p>
+</li>
+
+  </ul>
+</section>
+{% endblock content %}

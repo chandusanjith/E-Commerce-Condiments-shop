@@ -9,9 +9,10 @@ from django.views.generic import ListView, DetailView, View
 from django.shortcuts import redirect
 from django.utils import timezone
 from .forms import CheckoutForm, CouponForm, RefundForm
-from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber, subscriptions
+from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber, subscriptions, contacted
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
+from datetime import date
 
 # Create your views here.
 import random
@@ -19,6 +20,26 @@ import string
 import stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+@login_required
+def Aboutus(request):
+	return render(request, 'About-us.html')
+
+
+@login_required
+def Contactus(request):
+	return 	render(request, 'Contact-us.html')
+
+
+@login_required
+def addcontact(request):
+  name = request.POST['namec']
+  email = request.POST['email']
+  message = request.POST['msg']
+  mobileno = request.POST['mno']
+  data = contacted(name = name, email = email, message = message, mobile = mobileno, dateofcontact = date.today())
+  data.save()
+  messages.info(request, 'Thanks, we will contact you soon ')
+  return redirect("/")
 
 def signup(request):
   uname = request.POST['uname']
