@@ -13,6 +13,13 @@ from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Ref
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from datetime import date
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from django.template import Context
+from django.template.loader import render_to_string, get_template
+from django.core.mail import EmailMessage
+from twilio.rest import Client
 
 # Create your views here.
 import random
@@ -241,6 +248,8 @@ class CodOrder(View):
       custaddress = billing_address[bcount-1].street_address + "\n" + billing_address[bcount-1].apartment_address + "\n" + str(billing_address[bcount-1].country) + "\n" + billing_address[bcount-1].zip 
       print(context)
       phone = phonenumber.objects.filter(user =self.request.user )
+      user =  User.objects.get(username = self.request.user)
+      email = user.email
       print(phone)
       pakkafinal = ''
       for order_item in context['objects'].items.all():
@@ -258,7 +267,8 @@ class CodOrder(View):
           order.ordereditems = pakkafinal
           order.phonenumber = phone[0].phonenumber
           order.save()
-          
+          sendmail(pakkafinal, str(amount), email, str(user) , refnum , phone[0].phonenumber)
+          sendmailself(pakkafinal, str(amount), email, str(user), refnum )
           OrderDetailsCheck
           messages.success(self.request, "Order was successful Please note this order reference number " + '' + refnum )
           return redirect("/")
@@ -503,3 +513,74 @@ class RequestRefundView(View):
             except ObjectDoesNotExist:
                 messages.info(self.request, "This order does not exist")
                 return redirect("core:request-refund")
+
+def sendmail(items, totalamount, toaddress, username, refnum, phonenumber):
+       print(items)
+       print(toaddress)
+       print(totalamount)
+       ctx = {
+        'items': items,
+        'amount':totalamount,
+        'reference':refnum
+       }
+       mail_html = get_template('usermail.html').render(ctx)
+       #The mail addresses and password
+       sender_address = 'preethicondiments@gmail.com'
+       sender_pass = 'MYbday@2610'
+       receiver_address = toaddress
+        #Setup the MIME
+       message = MIMEMultipart()
+       message['From'] = sender_address
+       message['To'] = receiver_address
+       message['Subject'] = 'Your order has been placed succesfully'+ ' ' +  username  #The subject line
+       #The body and the attachments for the mail
+       message.attach(MIMEText(mail_html, 'html'))
+       #Create SMTP session for sending the mail
+       session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
+       session.starttls() #enable security
+       session.login(sender_address, sender_pass) #login with mail_id and password
+       text = message.as_string()
+       session.sendmail(sender_address, receiver_address, text)
+       session.quit()
+       print('Mail Sent')
+       mobilenumber = '+91'+phonenumber
+       SMS_BROADCAST_TO_NUMBERS = [ 
+         mobilenumber,
+         '+918970369157',
+         '+916360661878' # use the format +19735551234 
+        ]
+       message = "\nDear" + ' ' + username + '\n\n' "Your order has been placed , we will call you for the confirmation.\n Ordered Items:" + ' ' + items + '\n' + "Total Amount :" + ' ' + totalamount + '\n\n' + "Thanks for shopping with us \n Preethi Condiments" 
+       message_to_broadcast = (message)
+       client = Client('AC4097216494976f7e9680c539dec50e35', '17c111d7d4fd4694257182bcfbac01d2')
+       client.messages.create(to=SMS_BROADCAST_TO_NUMBERS,
+                                   from_='+12058393198',
+                                   body=message_to_broadcast)                                         
+def sendmailself(items, totalamount, toaddress, username, refnum):
+       print(items)
+       print(toaddress)
+       print(totalamount)
+       ctx = {
+        'items': items,
+        'amount':totalamount,
+        'reference':refnum
+       }
+       mail_html = get_template('usermail.html').render(ctx)
+       #The mail addresses and password
+       sender_address = 'preethicondiments@gmail.com'
+       sender_pass = 'MYbday@2610'
+       receiver_address = 'chandusanjith.talluri@gmail.com'
+        #Setup the MIME
+       message = MIMEMultipart()
+       message['From'] = sender_address
+       message['To'] = receiver_address
+       message['Subject'] = 'Your order has been placed succesfully'+ ' ' +  username  #The subject line
+       #The body and the attachments for the mail
+       message.attach(MIMEText(mail_html, 'html'))
+       #Create SMTP session for sending the mail
+       session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
+       session.starttls() #enable security
+       session.login(sender_address, sender_pass) #login with mail_id and password
+       text = message.as_string()
+       session.sendmail(sender_address, receiver_address, text)
+       session.quit()
+       print('Mail Sent')
