@@ -12,7 +12,8 @@ from .views import (
     AddCouponView,
     RequestRefundView,
     CategoryView, CodOrder, signup, MyOders,
-    MyProfile, Subscribe, Aboutus, Contactus, addcontact
+    MyProfile, Subscribe, Aboutus, Contactus, addcontact, Authotp,
+    DelUidLoadSignup
 )
 
 app_name = 'core'
@@ -38,5 +39,7 @@ urlpatterns = [
     path('subscribe/', Subscribe),
 	path('aboutus/', Aboutus),
 	path('contactus/', Contactus),
-	path('contacted/', addcontact)
+	path('contacted/', addcontact),
+  path('authotp/<uid>/', Authotp),
+  path('fromotptmout/<userid>/', DelUidLoadSignup)
 ]

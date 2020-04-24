@@ -226,3 +226,11 @@ class contacted(models.Model):
 	mobile = models.TextField()
 	dateofcontact = models.TextField()
 	
+
+
+class AccessUsers(models.Model):
+  Userid = models.TextField()
+  password = models.TextField()
+  email = models.TextField()
+  phonenumber = models.TextField()
+  passcode = models.IntegerField()

@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView, View
 from django.shortcuts import redirect
 from django.utils import timezone
 from .forms import CheckoutForm, CouponForm, RefundForm
-from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber, subscriptions, contacted
+from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber, subscriptions, contacted, AccessUsers
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from datetime import date
@@ -20,6 +20,7 @@ from django.template import Context
 from django.template.loader import render_to_string, get_template
 from django.core.mail import EmailMessage
 from twilio.rest import Client
+from random import randint
 
 # Create your views here.
 import random
@@ -66,11 +67,42 @@ def signup(request):
       messages.info(request, 'email already exist')
       return render(request, 'account/signup.html')
   else:
-    user = User.objects.create_user(username = uname, password = password1, email = email)
-    user.save()
-    pno = phonenumber(user =uname,phonenumber = mobile  )
-    pno.save()
-    return HttpResponseRedirect('/accounts/login/')
+     range_start = 10**(5-1)
+     range_end = (10**5)-1
+     passcode = randint(range_start, range_end)
+     
+     user = AccessUsers(Userid = uname, password = password1, email = email, phonenumber = mobile, passcode = passcode)
+     user.save()
+     sendpass(email, passcode)
+     context = {'userid' : uname,
+                'email': email}
+     return render(request, 'account/otpscreen.html', context)
+
+def Authotp(request, uid):
+  otp = request.POST["otp"]
+  print(uid)
+  print(otp)
+  validuser = AccessUsers.objects.filter(Userid = uid)
+  print(validuser[0].passcode)
+  if str(validuser[0].passcode) == str(otp):
+     authuser = User.objects.create_user(username = uid, password = validuser[0].password, email = validuser[0].email)
+     authuser.save()
+     pno = phonenumber(user =uid,phonenumber = validuser[0].phonenumber)
+     pno.save()
+     deldummy = AccessUsers.objects.filter(Userid = uid)
+     deldummy.delete()
+     messages.error(request, "Account Created Succesfully, Kindly Login to continue")
+     return HttpResponseRedirect('/accounts/login/')
+  else:
+     context = {'userid' : uid,
+                'email': validuser[0].email}
+     messages.error(request, "OTP Not correct")
+     return render(request, 'account/otpscreen.html', context)
+
+def DelUidLoadSignup(request, userid):
+  user = AccessUsers.objects.filter(Userid = userid)
+  user.delete()
+  return render(request, 'account/signup.html')
 
 class MyOders(LoginRequiredMixin, View):
      def get(self, *args, **kwargs):
@@ -526,7 +558,7 @@ def sendmail(items, totalamount, toaddress, username, refnum, phonenumber):
        mail_html = get_template('usermail.html').render(ctx)
        #The mail addresses and password
        sender_address = 'preethicondiments@gmail.com'
-       sender_pass = 'MYbday@2610'
+       sender_pass = ''
        receiver_address = toaddress
         #Setup the MIME
        message = MIMEMultipart()
@@ -542,19 +574,7 @@ def sendmail(items, totalamount, toaddress, username, refnum, phonenumber):
        text = message.as_string()
        session.sendmail(sender_address, receiver_address, text)
        session.quit()
-       print('Mail Sent')
-       mobilenumber = '+91'+phonenumber
-       SMS_BROADCAST_TO_NUMBERS = [ 
-         mobilenumber,
-         '+918970369157',
-         '+916360661878' # use the format +19735551234 
-        ]
-       message = "\nDear" + ' ' + username + '\n\n' "Your order has been placed , we will call you for the confirmation.\n Ordered Items:" + ' ' + items + '\n' + "Total Amount :" + ' ' + totalamount + '\n\n' + "Thanks for shopping with us \n Preethi Condiments" 
-       message_to_broadcast = (message)
-       client = Client('AC4097216494976f7e9680c539dec50e35', '17c111d7d4fd4694257182bcfbac01d2')
-       client.messages.create(to=SMS_BROADCAST_TO_NUMBERS,
-                                   from_='+12058393198',
-                                   body=message_to_broadcast)                                         
+       print('Mail Sent')                                         
 def sendmailself(items, totalamount, toaddress, username, refnum):
        print(items)
        print(toaddress)
@@ -567,7 +587,7 @@ def sendmailself(items, totalamount, toaddress, username, refnum):
        mail_html = get_template('usermail.html').render(ctx)
        #The mail addresses and password
        sender_address = 'preethicondiments@gmail.com'
-       sender_pass = 'MYbday@2610'
+       sender_pass = ''
        receiver_address = 'chandusanjith.talluri@gmail.com'
         #Setup the MIME
        message = MIMEMultipart()
@@ -584,3 +604,29 @@ def sendmailself(items, totalamount, toaddress, username, refnum):
        session.sendmail(sender_address, receiver_address, text)
        session.quit()
        print('Mail Sent')
+
+def sendpass(email, passcode):
+       ctx = {
+        'passcode':passcode
+       }
+       mail_html = get_template('otp.html').render(ctx)
+       #The mail addresses and password
+       sender_address = 'preethicondiments@gmail.com'
+       sender_pass = ''
+       receiver_address = email
+        #Setup the MIME
+       message = MIMEMultipart()
+       message['From'] = sender_address
+       message['To'] = receiver_address
+       message['Subject'] = 'OTP Preethi condiments'  #The subject line
+       #The body and the attachments for the mail
+       message.attach(MIMEText(mail_html, 'html'))
+       #Create SMTP session for sending the mail
+       session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
+       session.starttls() #enable security
+       session.login(sender_address, sender_pass) #login with mail_id and password
+       text = message.as_string()
+       session.sendmail(sender_address, receiver_address, text)
+       session.quit()
+       print('Mail Sent')
+
