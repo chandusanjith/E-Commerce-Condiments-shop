@@ -73,7 +73,8 @@ def signup(request):
      
      user = AccessUsers(Userid = uname, password = password1, email = email, phonenumber = mobile, passcode = passcode)
      user.save()
-     sendpass(email, passcode)
+     print(passcode)
+     #sendpass(email, passcode)
      context = {'userid' : uname,
                 'email': email}
      return render(request, 'account/otpscreen.html', context)
@@ -277,7 +278,7 @@ class CodOrder(View):
       billing_address = BillingAddress.objects.filter(user=self.request.user, address_type='B')
       bcount = BillingAddress.objects.filter(user=self.request.user, address_type='B').count()
       print(billing_address[bcount-1].zip)
-      custaddress = billing_address[bcount-1].street_address + "\n" + billing_address[bcount-1].apartment_address + "\n" + str(billing_address[bcount-1].country) + "\n" + billing_address[bcount-1].zip 
+      custaddress = billing_address[bcount-1].street_address + "\n" + billing_address[bcount-1].apartment_address + "\n" + str(billing_address[bcount-1].country) + "\n" + billing_address[bcount-1].state + "\n" + billing_address[bcount-1].zip 
       print(context)
       phone = phonenumber.objects.filter(user =self.request.user )
       user =  User.objects.get(username = self.request.user)
@@ -299,8 +300,8 @@ class CodOrder(View):
           order.ordereditems = pakkafinal
           order.phonenumber = phone[0].phonenumber
           order.save()
-          sendmail(pakkafinal, str(amount), email, str(user) , refnum , phone[0].phonenumber)
-          sendmailself(pakkafinal, str(amount), email, str(user), refnum )
+          #sendmail(pakkafinal, str(amount), email, str(user) , refnum , phone[0].phonenumber)
+          #sendmailself(pakkafinal, str(amount), email, str(user), refnum )
           OrderDetailsCheck
           messages.success(self.request, "Order was successful Please note this order reference number " + '' + refnum )
           return redirect("/")
@@ -337,6 +338,7 @@ class CheckoutView(View):
                 street_address = form.cleaned_data.get('street_address')
                 apartment_address = form.cleaned_data.get('apartment_address')
                 country = form.cleaned_data.get('country')
+                state = form.cleaned_data.get('state')
                 zip = form.cleaned_data.get('zip')
                 # add functionality for these fields
                 # same_shipping_address = form.cleaned_data.get(
@@ -348,6 +350,7 @@ class CheckoutView(View):
                     street_address=street_address,
                     apartment_address=apartment_address,
                     country=country,
+                    state=state,
                     zip=zip,
                     address_type='B'
                 )
@@ -360,8 +363,10 @@ class CheckoutView(View):
                     return redirect('core:payment', payment_option='stripe')
                 elif payment_option == 'P':
                     return redirect('core:payment', payment_option='paypal')
-                elif payment_option == 'COD':
+                elif payment_option == 'COD' and country != 'US':
                      return HttpResponseRedirect('/codorder/')
+                elif payment_option == 'COD' and country == 'US':
+                     return render(self.request, 'usaconfirm.html') 
                 else:
                     messages.warning(
                         self.request, "Invalid payment option select")
@@ -629,4 +634,3 @@ def sendpass(email, passcode):
        session.sendmail(sender_address, receiver_address, text)
        session.quit()
        print('Mail Sent')
-
