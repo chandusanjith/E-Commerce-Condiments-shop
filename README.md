@@ -1,5 +1,5 @@
 # E-Commerce-Condiments-shop
-######A E-Commerce application based on python and Django
+#A E-Commerce application based on python and Django
 
 
 # Installation:
