@@ -13,7 +13,7 @@ from .views import (
     RequestRefundView,
     CategoryView, CodOrder, signup, MyOders,
     MyProfile, Subscribe, Aboutus, Contactus, addcontact, Authotp,
-    DelUidLoadSignup, USAorders
+    DelUidLoadSignup, USAorders, Fpwload, authforgotpw, CheckAndChangePw, ChangePw
 )
 
 app_name = 'core'
@@ -42,5 +42,9 @@ urlpatterns = [
 	path('contacted/', addcontact),
   path('authotp/<uid>/', Authotp),
   path('fromotptmout/<userid>/', DelUidLoadSignup),
-  path('usaorder/<usaamt>/<uid>/<weight>/<amount>/<total_weight_cost>/', USAorders)
+  path('usaorder/<usaamt>/<uid>/<weight>/<amount>/<total_weight_cost>/', USAorders),
+  path('forgotpw/', Fpwload),
+  path('forgotpwauth/', authforgotpw),
+  path('authfpwotp/<uid>/', CheckAndChangePw),
+  path('changepw/<uid>', ChangePw)
 ]

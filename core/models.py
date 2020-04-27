@@ -252,3 +252,7 @@ class USAorder(models.Model):
   userid = models.TextField(primary_key=True)
   total_cost = models.TextField()
   discription = models.TextField()
+
+class OTPdummy(models.Model):
+  userid = models.TextField()
+  passcode = models.TextField()

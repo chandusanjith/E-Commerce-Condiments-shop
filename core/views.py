@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView, View
 from django.shortcuts import redirect
 from django.utils import timezone
 from .forms import CheckoutForm, CouponForm, RefundForm
-from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber, subscriptions, contacted, AccessUsers,USAorder
+from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber, subscriptions, OTPdummy,contacted, AccessUsers,USAorder
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from datetime import date
@@ -48,6 +48,54 @@ def addcontact(request):
   data.save()
   messages.info(request, 'Thanks, we will contact you soon ')
   return redirect("/")
+
+
+
+def Fpwload(request):
+  return render(request, 'account/forgotpass.html')
+
+def authforgotpw(request):
+  email = request.POST['email']
+  if User.objects.filter(email = email).exists():
+    user = User.objects.filter(email = email)
+    range_start = 10**(5-1)
+    range_end = (10**5)-1
+    passcode = randint(range_start, range_end)
+    print(passcode)
+    #sendpass(email, passcode)
+    a = OTPdummy(userid = user[0].username, passcode = passcode )
+    a.save()
+    context = {'userid':user[0].username,
+                'mailid': email }
+    return render(request, 'account/forgotpwotp.html', context)
+  else:
+    messages.info(request, 'email doesnot exist, try creating new account and proceed')
+    return render(request, 'account/signup.html')
+
+def CheckAndChangePw(request, uid):
+  passcode = request.POST["otp"]
+  b = OTPdummy.objects.filter(userid = uid)
+  if int(b[0].passcode) == int(passcode):
+     b.delete()
+     context = { 'userid': uid}
+     return render(request, 'account/changepw.html', context)
+  else:
+      messages.error(request, "OTP Not correct, user try again!! ")
+      b.delete()
+      return render(request, 'account/forgotpass.html')
+
+def ChangePw(request, uid):
+  pass1 = request.POST['pw1']
+  pass2 = request.POST['pw2']
+  if pass1 == pass2:
+    u = User.objects.get(username=uid)
+    u.set_password(pass1)
+    u.save()
+    messages.error(request, "Password changed succesfully, Kindly login and proceed further")
+    return HttpResponseRedirect('/accounts/login/')
+  else:
+      messages.error(request, "Passwords are not matching!!, try again")
+      return render(request, 'account/forgotpass.html')
 
 def signup(request):
   uname = request.POST['uname']
