@@ -13,7 +13,7 @@ from .views import (
     RequestRefundView,
     CategoryView, CodOrder, signup, MyOders,
     MyProfile, Subscribe, Aboutus, Contactus, addcontact, Authotp,
-    DelUidLoadSignup
+    DelUidLoadSignup, USAorders
 )
 
 app_name = 'core'
@@ -32,7 +32,7 @@ urlpatterns = [
          name='remove-single-item-from-cart'),
     path('payment/<payment_option>/', PaymentView.as_view(), name='payment'),
     path('request-refund/', RequestRefundView.as_view(), name='request-refund'),
-    path('codorder/', CodOrder.as_view(), name='codorder'),
+    path('codorder/<slug>/', CodOrder.as_view(), name='codorder'),
     path('signup/', signup),
     path('myorders/', MyOders.as_view(), name = 'myorders'),
     path('myprofile/', MyProfile.as_view(), name = 'myprofile'),
@@ -41,5 +41,6 @@ urlpatterns = [
 	path('contactus/', Contactus),
 	path('contacted/', addcontact),
   path('authotp/<uid>/', Authotp),
-  path('fromotptmout/<userid>/', DelUidLoadSignup)
+  path('fromotptmout/<userid>/', DelUidLoadSignup),
+  path('usaorder/<usaamt>/<uid>/<weight>/<amount>/<total_weight_cost>/', USAorders)
 ]

@@ -9,7 +9,7 @@ from django.views.generic import ListView, DetailView, View
 from django.shortcuts import redirect
 from django.utils import timezone
 from .forms import CheckoutForm, CouponForm, RefundForm
-from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber, subscriptions, contacted, AccessUsers
+from .models import Item, OrderItem, Order, BillingAddress, Payment, Coupon, Refund, Category, OrderDetailsCheck, phonenumber, subscriptions, contacted, AccessUsers,USAorder
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from datetime import date
@@ -138,7 +138,17 @@ def Subscribe(request):
 def create_ref_code():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
 
+@login_required
+def USAorders(request, usaamt,uid,weight,amount,total_weight_cost):
 
+   disp = "Total Items Cost : ₹"+ amount + '\n' + "Total weight is "+ weight+"KG, cost of shipment is ₹" + total_weight_cost + '\n' + "Total cost : ₹" + amount + "+" "₹"+ total_weight_cost + "= ₹" + usaamt
+   print(disp)
+   dummy = USAorder(userid =uid, total_cost = usaamt, discription = disp)
+   dummy.save()
+   messages.error(request, "Processing!!")
+   return HttpResponseRedirect('/codorder/usa/')
+
+   
 class PaymentView(View):
     def get(self, *args, **kwargs):
         # order
@@ -258,6 +268,8 @@ class ItemDetailView(DetailView):
 class CategoryView(View):
     def get(self, *args, **kwargs):
         category = Category.objects.get(slug=self.kwargs['slug'])
+        print("here")
+        print(self.kwargs['slug'])
         item = Item.objects.filter(category=category, is_active=True)
         context = {
             'object_list': item,
@@ -270,11 +282,15 @@ class CategoryView(View):
 
 class CodOrder(View):
   def get(self, *args, **kwargs):
+      print(self.kwargs['slug'])
       order = Order.objects.get(user=self.request.user, ordered=False)
       context = {
                 'objects': order
             }
       amount = int(order.get_total())
+      if self.kwargs['slug'] == "usa":
+          usaorder = USAorder.objects.get(userid=self.request.user)
+      
       billing_address = BillingAddress.objects.filter(user=self.request.user, address_type='B')
       bcount = BillingAddress.objects.filter(user=self.request.user, address_type='B').count()
       print(billing_address[bcount-1].zip)
@@ -292,16 +308,25 @@ class CodOrder(View):
 
       try:
           order.ordered = True
-          order.amount = str(amount)
+          if self.kwargs['slug'] == "usa":
+            amt = usaorder.total_cost
+            order.amount = usaorder.total_cost
+            us = pakkafinal + "Additional Info" + usaorder.discription
+            order.ordereditems = pakkafinal + "Additional Info" + usaorder.discription
+            usaorder.delete()
+          else:
+             order.amount = str(amount)
+             order.ordereditems = pakkafinal
+             us = pakkafinal
+             amt = str(amount)
           order.deliveryaddress = custaddress
            # TODO : assign ref code
           refnum = create_ref_code()
           order.ref_code = refnum
-          order.ordereditems = pakkafinal
           order.phonenumber = phone[0].phonenumber
           order.save()
-          #sendmail(pakkafinal, str(amount), email, str(user) , refnum , phone[0].phonenumber)
-          #sendmailself(pakkafinal, str(amount), email, str(user), refnum )
+          #sendmail(us, amt, email, str(user) , refnum , phone[0].phonenumber)
+          #sendmailself(us, amt, email, str(user), refnum )
           OrderDetailsCheck
           messages.success(self.request, "Order was successful Please note this order reference number " + '' + refnum )
           return redirect("/")
@@ -364,9 +389,34 @@ class CheckoutView(View):
                 elif payment_option == 'P':
                     return redirect('core:payment', payment_option='paypal')
                 elif payment_option == 'COD' and country != 'US':
-                     return HttpResponseRedirect('/codorder/')
+                     return HttpResponseRedirect('/codorder/india/')
                 elif payment_option == 'COD' and country == 'US':
-                     return render(self.request, 'usaconfirm.html') 
+                     amount = int(order.get_total())
+                     weight = int(order.get_weight_total())
+                     if weight <= 1 or (weight >= 1 and weight <= 2):
+                        total_weight_cost = weight * 1200
+                     elif  weight > 2 and weight <= 3:
+                         total_weight_cost = weight * 950
+                     elif weight > 3 and weight <= 4:
+                          total_weight_cost = weight * 805
+                     elif weight > 4 and weight <=5:
+                         total_weight_cost = weight * 700
+                     elif weight > 5 and weight <= 9:
+                          total_weight_cost = weight * 650
+                     elif weight > 9 and weight <= 10:
+                          total_weight_cost = weight * 550
+                     elif weight > 10 and weight <= 20:
+                          total_weight_cost = weight * 500
+                     elif weight > 20:
+                          total_weight_cost = weight * 460
+                     final_usa_amount = total_weight_cost + amount
+                     context = {'final_usa_amount':final_usa_amount,
+                                'amount':amount,
+                                'order': order,
+                                'weight':weight,
+                                'total_weight_cost':total_weight_cost,
+                                'userid':self.request.user }
+                     return render(self.request, 'usaconfirm.html', context) 
                 else:
                     messages.warning(
                         self.request, "Invalid payment option select")

@@ -80,17 +80,47 @@ hr:after {
   line-height: 1;
   content: ". . . . . . .";
 }
+table, td, th {
+  border: 1px solid black;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  height: 50px;
+}
 </style>
-<h1>Important Notice</h1>
-  
+<h1>Important Notice</h1>       
 <p>Since the deleivery address is of USA, we will ship the order through GarudaVega courier services.</p>
 <p>Addition to total charges we will be charging you based on weight</p>
 <hr>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Quantity</th>
+    <th>Weight</th>
+    <th>Item cost</th>
+  </tr>
+  {% for order_item in order.items.all %}
+  <tr>
+    <td>{{ order_item.item.title }}</td>
+    <td>{{ order_item.quantity }}</td>
+    <td>{{order_item.get_final_weight }}KG</td>
+    <td>₹{{order_item.get_final_price}}</td>
+  </tr>
+  {% endfor %}
+  </table>
+  <h4> Total Items Cost : ₹{{amount}} </h4>
+  <h4> Total weight is {{weight}}KG, cost of shipment is ₹{{ total_weight_cost}}</h4>
+  <h4> Total cost : ₹{{amount}} + ₹{{total_weight_cost}} = ₹{{final_usa_amount}} </h4>
 
 <p>Once order is confirmed our executive will contact you through email to give details about shipment and charges </p>
 <hr>
 <p>Proceed with order confirmation ?</p>
-<form action = "/codorder/" >
+<form action = "/usaorder/{{final_usa_amount}}/{{userid}}/{{weight}}/{{amount}}/{{total_weight_cost}}/" >
   <button type="submit" href = "/codorder/" class="button button1">Confirm Order</button>
 </form>
 <hr>
