@@ -44,7 +44,7 @@
   <div class="py-5 text-center">
     <img class="d-block mx-auto mb-4" src="/docs/4.3/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
     <h2>Checkout form</h2>
-    <p class="lead">Asthis is the beta version, no payment option is available, currently only cash on delivery is available</p>
+    <p class="lead">As this is the beta version, no payment option is available, currently only cash on delivery is available</p>
   </div>
 
   <div class="row">
@@ -74,15 +74,10 @@
             </div>
           </div>
           <div class="col-md-4 mb-3">
-            <label for="state">City</label>
-            <select class="custom-select d-block w-100" id="state" required>
-              <option value="">Choose...</option>
-              <option>Karnataka</option>
-              <option>Yangon</option>
-
-            </select>
+            <label for="state">City,State(Karntaka,Banglore)</label>
+            {{ form.state }} 
             <div class="invalid-feedback">
-              Please provide a valid state.
+              state and city required.
             </div>
           </div>
           <div class="col-md-3 mb-3">

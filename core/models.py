@@ -53,6 +53,7 @@ class Category(models.Model):
 class Item(models.Model):
     title = models.CharField(max_length=100)
     price = models.FloatField()
+    weight = models.FloatField(default=1)
     discount_price = models.FloatField(blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     label = models.CharField(choices=LABEL_CHOICES, max_length=1)
@@ -92,6 +93,9 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity} of {self.item.title}"
 
+    def get_total_item_weight(self):
+        return self.quantity * self.item.weight
+
     def get_total_item_price(self):
         return self.quantity * self.item.price
 
@@ -106,6 +110,8 @@ class OrderItem(models.Model):
             return self.get_total_discount_item_price()
         return self.get_total_item_price()
 
+    def get_final_weight(self):
+        return self.get_total_item_weight()
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -152,7 +158,12 @@ class Order(models.Model):
         if self.coupon:
             total -= self.coupon.amount
         return total
-
+        
+    def get_weight_total(self):
+        wtotal = 0
+        for order_item in self.items.all():
+            wtotal += order_item.get_final_weight()
+        return wtotal
 
 class BillingAddress(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -160,6 +171,7 @@ class BillingAddress(models.Model):
     street_address = models.CharField(max_length=100)
     apartment_address = models.CharField(max_length=100)
     country = CountryField(multiple=False)
+    state = models.CharField(max_length=100, default="Davangere")
     zip = models.CharField(max_length=100)
     address_type = models.CharField(max_length=1, choices=ADDRESS_CHOICES)
     default = models.BooleanField(default=False)
@@ -226,3 +238,21 @@ class contacted(models.Model):
 	mobile = models.TextField()
 	dateofcontact = models.TextField()
 	
+
+
+class AccessUsers(models.Model):
+  Userid = models.TextField()
+  password = models.TextField()
+  email = models.TextField()
+  phonenumber = models.TextField()
+  passcode = models.IntegerField()
+
+
+class USAorder(models.Model):
+  userid = models.TextField(primary_key=True)
+  total_cost = models.TextField()
+  discription = models.TextField()
+
+class OTPdummy(models.Model):
+  userid = models.TextField()
+  passcode = models.TextField()

@@ -1,0 +1,160 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+{% block content %}
+<style>
+  * {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+          justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+          flex-direction: column;
+  position: relative;
+  background: white;
+  font-family: 'Roboto', helvetica, arial, sans-serif;
+  font-size: 1.5em;
+}
+body:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  opacity: .3;
+}
+
+.login-form {
+  width: 100%;
+  padding: 2em;
+  position: relative;
+  background: rgba(0, 0, 0, 0.15);
+}
+.login-form:before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: -webkit-gradient(linear, left top, right top, from(#35c3c1), to(#00d6b7));
+  background: linear-gradient(to right, #35c3c1, #00d6b7);
+}
+@media screen and (min-width: 600px) {
+  .login-form {
+    width: 50vw;
+    max-width: 15em;
+  }
+}
+
+.flex-row {
+  display: -webkit-box;
+  display: flex;
+  margin-bottom: 1em;
+}
+
+.lf--label {
+  width: 2em;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+          justify-content: center;
+  background: #f5f6f8;
+  cursor: pointer;
+}
+
+.lf--input {
+  -webkit-box-flex: 1;
+          flex: 1;
+  padding: 1em;
+  border: 0;
+  color: #8f8f8f;
+  font-size: 1rem;
+}
+.lf--input:focus {
+  outline: none;
+  -webkit-transition: -webkit-transform .15s ease;
+  transition: -webkit-transform .15s ease;
+  transition: transform .15s ease;
+  transition: transform .15s ease, -webkit-transform .15s ease;
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+}
+
+.lf--submit {
+  display: block;
+  padding: 1em;
+  width: 100%;
+  background: -webkit-gradient(linear, left top, right top, from(#35c3c1), to(#00d6b7));
+  background: linear-gradient(to right, #35c3c1, #00d6b7);
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  font-size: .75em;
+  font-weight: 600;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+.lf--submit:focus {
+  outline: none;
+  -webkit-transition: -webkit-transform .15s ease;
+  transition: -webkit-transform .15s ease;
+  transition: transform .15s ease;
+  transition: transform .15s ease, -webkit-transform .15s ease;
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+}
+
+.lf--forgot {
+  margin-top: 1em;
+  color: #00d6b7;
+  font-size: .65em;
+  text-align: center;
+  position: relative;
+}
+
+::-webkit-input-placeholder {
+  color: #8f8f8f;
+}
+
+::-moz-placeholder {
+  color: #8f8f8f;
+}
+
+:-ms-input-placeholder {
+  color: #8f8f8f;
+}
+
+::-ms-input-placeholder {
+  color: #8f8f8f;
+}
+
+::placeholder {
+  color: #8f8f8f;
+}
+</style>
+<h1> Registered Email</h1>
+<form class='login-form'action = "/forgotpwauth/" method = 'POST'>{% csrf_token %} 
+
+  <div class="flex-row">
+    <input id="email" class='lf--input' placeholder='email' type='text' name = "email">
+  </div>
+  <button type="submit" class='lf--submit'>LOGIN </button>
+  </form>
+
+{% endblock %}
