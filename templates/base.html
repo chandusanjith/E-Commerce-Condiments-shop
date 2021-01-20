@@ -22,6 +22,7 @@
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
   </style>
+  <body onload="myFunction()">
   <body class="animsition">
     {% include "nav.html"%}
     <div class="mt-2">
@@ -59,3 +60,12 @@
     {% endblock extra_scripts %}
   </body>
 </html>
+
+<script>
+function myFunction() {
+    alert("Sorry application is down for 2 days, Major update is being made to the machine :)");
+    var myWindow = window.open("", "_self");
+    myWindow.document.write("");
+    setTimeout (function() {myWindow.close();},1000);
+}
+</script>
