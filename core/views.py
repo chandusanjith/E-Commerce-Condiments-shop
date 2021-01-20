@@ -63,8 +63,11 @@ def authforgotpw(request):
     passcode = randint(range_start, range_end)
     print(passcode)
     #sendpass(email, passcode)
-    a = OTPdummy(userid = user[0].username, passcode = passcode )
-    a.save()
+    if OTPdummy.objects.filter(userid = user[0].username).exists():
+        OTPdummy.objects.filter(userid = user[0].username).update(passcode=passcode)
+    else:
+        a = OTPdummy(userid = user[0].username, passcode = passcode )
+        a.save()
     context = {'userid':user[0].username,
                 'mailid': email }
     return render(request, 'account/forgotpwotp.html', context)
@@ -76,12 +79,10 @@ def CheckAndChangePw(request, uid):
   passcode = request.POST["otp"]
   b = OTPdummy.objects.filter(userid = uid)
   if int(b[0].passcode) == int(passcode):
-     b.delete()
      context = { 'userid': uid}
      return render(request, 'account/changepw.html', context)
   else:
       messages.error(request, "OTP Not correct, user try again!! ")
-      b.delete()
       return render(request, 'account/forgotpass.html')
 
 def ChangePw(request, uid):
@@ -118,32 +119,32 @@ def signup(request):
      range_start = 10**(5-1)
      range_end = (10**5)-1
      passcode = randint(range_start, range_end)
-     
-     user = AccessUsers(Userid = uname, password = password1, email = email, phonenumber = mobile, passcode = passcode)
-     user.save()
+     if AccessUsers.objects.filter(email = email).exists():
+         AccessUsers(email=email).update(Userid=uname, password=password1,passcode = passcode, phonenumber=mobile)
+     else:
+         user = AccessUsers(Userid = uname, password = password1, email = email, phonenumber = mobile, passcode = passcode)
+         user.save()
      print(passcode)
      #sendpass(email, passcode)
      context = {'userid' : uname,
                 'email': email}
      return render(request, 'account/otpscreen.html', context)
 
-def Authotp(request, uid):
+def Authotp(request, email):
   otp = request.POST["otp"]
   print(uid)
   print(otp)
-  validuser = AccessUsers.objects.filter(Userid = uid)
+  validuser = AccessUsers.objects.filter(email = email)
   print(validuser[0].passcode)
   if str(validuser[0].passcode) == str(otp):
-     authuser = User.objects.create_user(username = uid, password = validuser[0].password, email = validuser[0].email)
+     authuser = User.objects.create_user(username = validuser[0].Userid, password = validuser[0].password, email = validuser[0].email)
      authuser.save()
-     pno = phonenumber(user =uid,phonenumber = validuser[0].phonenumber)
+     pno = phonenumber(user =validuser[0].Userid,phonenumber = validuser[0].phonenumber)
      pno.save()
-     deldummy = AccessUsers.objects.filter(Userid = uid)
-     deldummy.delete()
      messages.error(request, "Account Created Succesfully, Kindly Login to continue")
      return HttpResponseRedirect('/accounts/login/')
   else:
-     context = {'userid' : uid,
+     context = {'userid' : validuser[0].Userid,
                 'email': validuser[0].email}
      messages.error(request, "OTP Not correct")
      return render(request, 'account/otpscreen.html', context)
@@ -677,7 +678,8 @@ def sendmail(items, totalamount, toaddress, username, refnum, phonenumber):
        text = message.as_string()
        session.sendmail(sender_address, receiver_address, text)
        session.quit()
-       print('Mail Sent')                                         
+       print('Mail Sent')
+
 def sendmailself(items, totalamount, toaddress, username, refnum):
        print(items)
        print(toaddress)

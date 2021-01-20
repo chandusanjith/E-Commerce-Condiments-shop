@@ -40,7 +40,7 @@ urlpatterns = [
 	path('aboutus/', Aboutus),
 	path('contactus/', Contactus),
 	path('contacted/', addcontact),
-  path('authotp/<uid>/', Authotp),
+  path('authotp/<email>/', Authotp),
   path('fromotptmout/<userid>/', DelUidLoadSignup),
   path('usaorder/<usaamt>/<uid>/<weight>/<amount>/<total_weight_cost>/', USAorders),
   path('forgotpw/', Fpwload),

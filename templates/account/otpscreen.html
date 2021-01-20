@@ -157,7 +157,7 @@ body {
   <h2> OTP has been shared on mail id : {{ email }} </h2>
 	<div class="container">
 	<div class="container__item">
-    <form action = "/authotp/{{userid}}/" method = "POST"> {% csrf_token %}
+    <form action = "/authotp/{{email}}/" method = "POST"> {% csrf_token %}
 			<input type="otp" class="form__field" placeholder="OTP goes here" name = "otp">
 			<button type="submit" class="btn btn--primary btn--inside uppercase">Validate</button>
       <h2> 	&nbsp;</h2>

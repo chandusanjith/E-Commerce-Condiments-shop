@@ -61,6 +61,7 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
   {% endif %}
   <a class="btn btn-outline-dark" href="/forgotpw/">{% trans "Forgot Password?" %}</a>
   <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+    <a class="btn btn-outline-dark" href="{% url 'account_signup' %}">{% trans "New User? Register here." %}</a>
 </form>
 
     </div>
