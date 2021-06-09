@@ -12,7 +12,7 @@ colorama==0.4.1
 constantly==15.1.0
 cryptography==2.7
 defusedxml==0.6.0
-Django==2.2.4
+Django==2.2.22
 django-allauth==0.40.0
 django-countries==5.5
 django-crispy-forms==1.7.2
